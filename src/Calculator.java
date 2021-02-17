@@ -43,7 +43,7 @@ public class Calculator {
             if(isNum(token)) {
                 stack.push(Double.valueOf(token));
             } else if(stack.size() > 1) {
-                stack.push(apply(token,stack.pop(),stack.pop()));
+                stack.push(applyOperator(token,stack.pop(),stack.pop()));
             } else {
                 if("(".equals(token)){
                     throw new IllegalArgumentException(MISSING_OPERATOR);
@@ -51,9 +51,7 @@ public class Calculator {
                 throw new IllegalArgumentException(MISSING_OPERAND);
             }
         }
-        if(stack.size() > 1) {
-            throw new IllegalArgumentException(MISSING_OPERATOR);
-        }
+
        if(stack.size() > 1){
            throw new IllegalArgumentException(MISSING_OPERATOR);
 
@@ -62,10 +60,7 @@ public class Calculator {
 
     }
 
-    Double apply(String op, Double d1, Double d2) {
 
-        return applyOperator(op, (double) d1, (double) d2);
-    }
 
     double applyOperator(String op, double d1, double d2) {
         switch (op) {
@@ -89,9 +84,6 @@ public class Calculator {
     // ------- Infix 2 Postfix ------------------------
 
     List<String> infix2Postfix(List<String> infix) {
-        if(infix.size() == 1 && isNum(infix.get(0))){
-            throw new IllegalArgumentException(MISSING_OPERATOR);
-        }
 
 
         Deque<String> stack = new ArrayDeque<>();
@@ -108,7 +100,7 @@ public class Calculator {
                 handleParen(stack,postfix);
             }
         }
-        while(!stack.isEmpty()) {
+        while(!stack.isEmpty()) { //Add the remaining operators to the postfix
             postfix.add(stack.pop());
         }
         return postfix;
@@ -143,7 +135,7 @@ public class Calculator {
             }
             stack.pop();
         } catch (NoSuchElementException e) {
-            //TODO Figure out what to do with mismatched brackets
+            //We catch the exception, only to throw another. This is highly competent programming
             throw new IllegalArgumentException(MISSING_OPERATOR);
         }
 
@@ -180,22 +172,25 @@ public class Calculator {
 
     // List String (not char) because numbers (with many chars)
     List<String> tokenize(String expr) {
-        List<String> tokens = new ArrayList<String>();
+        List<String> tokens = new ArrayList<>();
         StringBuilder current = new StringBuilder();
         for(char c: expr.toCharArray()) { // It seems we can't iterate over a string without first converting it to a char allay.
             String cs = String.valueOf(c); //This is highly unfortunate since we must immediately convert the chars back to strings.
-            if((OPERATORS.contains(cs) || "()".contains(cs))) {
-                if(current.length() > 0) {
-                    tokens.add(current.toString());
-                }
-                current = new StringBuilder();
-                tokens.add(cs);
-            } else if(Character.isDigit(c)) {
+            if(Character.isDigit(c)) {
                 current.append(cs);
+                continue;
+            }
+            if(current.length() > 0) { //End the current token when any non-digit is encountered...
+                tokens.add(current.toString());
+                current = new StringBuilder();
+            }
+            if(OPERATORS.concat("()").contains(cs)) { //... But only append operators and brackets to the final list
+                tokens.add(cs);
             }
         }
         if(current.length() > 0) {
-            tokens.add(current.toString());
+            tokens.add(current.toString()); //if there is something left in the stringbuilder after the last
+            // Iteration, we want to append it
         }
         return tokens;
     }
