@@ -75,7 +75,7 @@ public class Calculator {
             } else if("(".equals(token)) {
                 stack.push(token);
             } else if (")".equals(token)) {
-                annanMetod()
+                handleParen(stack,postfix);
             }
         }
         while(!stack.isEmpty()) {
@@ -102,6 +102,18 @@ public class Calculator {
         boolean leftPush = getPrecedence(op) <= getPrecedence(stack.peek()) && getAssociativity(op) == Assoc.LEFT;
         boolean rightPush = getPrecedence(op) < getPrecedence(stack.peek());
         return leftPush || rightPush;
+    }
+
+    void  handleParen(Deque<String> stack, List<String> postfix) {
+        try {
+            while(stack.peek() != "(") {
+                postfix.add(stack.pop());
+            }
+            stack.pop();
+        } catch(Exception E) {
+            //TODO
+            //There were mismatched parentheses
+        }
     }
 
     int getPrecedence(String op) {
