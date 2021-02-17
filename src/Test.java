@@ -24,7 +24,7 @@ class Test {
         // Uncomment line by line to test
 
         // Tokenization ---------------------------
-
+        /*
         t("1 + 10", "1 + 10");  // Arguments are input and expected output
 
         t("1+ 10", "1 + 10");   // Expected is in fact a list [ "1", "+", "10"]
@@ -47,7 +47,7 @@ class Test {
         i2p("4^3*2", "4 3 ^ 2 *");
         i2p("(1+2)*3", "1 2 + 3 *");
         i2p("2^(1+1)", "2 1 1 + ^");
-        /*
+        */
 
         // Evaluation ------------------------------
         // A value
@@ -92,7 +92,7 @@ class Test {
         // Mix priority and right and left associativity
         e(" 1 ^ 1 ^ 1 ^ 1  - 1", 0);
         e(" 4 - 2 - 1 ^ 2 ", 1);
-
+        /*
         // Exceptions -----------------------------------
         try {
             e("1 / 0 ", 0);   // 0 just a dummy
@@ -119,7 +119,9 @@ class Test {
         } catch (IllegalArgumentException e) {
             out.println(e.getMessage().equals(Calculator.MISSING_OPERATOR));
         }
-*/
+
+         */
+
     }
 
 

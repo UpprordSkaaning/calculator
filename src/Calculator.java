@@ -38,13 +38,19 @@ public class Calculator {
     // ------  Evaluate RPN expression -------------------
 
     double evalPostfix(List<String> postfix) {
-        ArrayDeque<String> stack = new ArrayDeque<>();
+        ArrayDeque<Double> stack = new ArrayDeque<>();
         for(String token: postfix) {
             if(isNum(token)) {
-                //DO SOMETHING
+                stack.push(Double.valueOf(token));
+            } else {
+                stack.push(apply(token,stack.pop(),stack.pop()));
             }
         }
-        return 0;
+        return stack.pop();
+    }
+
+    Double apply(String op, Double d1, Double d2) {
+        return applyOperator(op, (double) d1, (double) d2);
     }
 
     double applyOperator(String op, double d1, double d2) {
