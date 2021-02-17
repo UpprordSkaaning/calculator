@@ -42,9 +42,14 @@ public class Calculator {
         for(String token: postfix) {
             if(isNum(token)) {
                 stack.push(Double.valueOf(token));
-            } else {
+            } else if(stack.size() > 1) {
                 stack.push(apply(token,stack.pop(),stack.pop()));
+            } else {
+                throw new IllegalArgumentException(MISSING_OPERAND);
             }
+        }
+        if(stack.size() > 1) {
+            throw new IllegalArgumentException(MISSING_OPERATOR);
         }
         return stack.pop();
     }

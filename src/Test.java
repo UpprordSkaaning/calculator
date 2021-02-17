@@ -92,7 +92,7 @@ class Test {
         // Mix priority and right and left associativity
         e(" 1 ^ 1 ^ 1 ^ 1  - 1", 0);
         e(" 4 - 2 - 1 ^ 2 ", 1);
-        /*
+
         // Exceptions -----------------------------------
         try {
             e("1 / 0 ", 0);   // 0 just a dummy
@@ -120,7 +120,7 @@ class Test {
             out.println(e.getMessage().equals(Calculator.MISSING_OPERATOR));
         }
 
-         */
+
 
     }
 
