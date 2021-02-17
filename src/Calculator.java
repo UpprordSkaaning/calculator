@@ -45,16 +45,25 @@ public class Calculator {
             } else if(stack.size() > 1) {
                 stack.push(apply(token,stack.pop(),stack.pop()));
             } else {
+                if("(".equals(token)){
+                    throw new IllegalArgumentException(MISSING_OPERATOR);
+                }
                 throw new IllegalArgumentException(MISSING_OPERAND);
             }
         }
         if(stack.size() > 1) {
             throw new IllegalArgumentException(MISSING_OPERATOR);
         }
-        return stack.pop();
+       if(stack.size() > 1){
+           throw new IllegalArgumentException(MISSING_OPERATOR);
+
+       }
+       return stack.pop();
+
     }
 
     Double apply(String op, Double d1, Double d2) {
+
         return applyOperator(op, (double) d1, (double) d2);
     }
 
@@ -80,6 +89,11 @@ public class Calculator {
     // ------- Infix 2 Postfix ------------------------
 
     List<String> infix2Postfix(List<String> infix) {
+        if(infix.size() == 1 && isNum(infix.get(0))){
+            throw new IllegalArgumentException(MISSING_OPERATOR);
+        }
+
+
         Deque<String> stack = new ArrayDeque<>();
         List<String> postfix = new ArrayList<>();
         for(String token: infix) {
@@ -128,8 +142,9 @@ public class Calculator {
                 postfix.add(stack.pop());
             }
             stack.pop();
-        } catch (EmptyStackException e) {
+        } catch (NoSuchElementException e) {
             //TODO Figure out what to do with mismatched brackets
+            throw new IllegalArgumentException(MISSING_OPERATOR);
         }
 
     }

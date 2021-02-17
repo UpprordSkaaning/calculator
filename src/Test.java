@@ -47,7 +47,7 @@ class Test {
         i2p("4^3*2", "4 3 ^ 2 *");
         i2p("(1+2)*3", "1 2 + 3 *");
         i2p("2^(1+1)", "2 1 1 + ^");
-        */
+
 
         // Evaluation ------------------------------
         // A value
@@ -92,6 +92,8 @@ class Test {
         // Mix priority and right and left associativity
         e(" 1 ^ 1 ^ 1 ^ 1  - 1", 0);
         e(" 4 - 2 - 1 ^ 2 ", 1);
+
+         */
 
         // Exceptions -----------------------------------
         try {
