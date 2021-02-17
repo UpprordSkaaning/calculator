@@ -38,7 +38,12 @@ public class Calculator {
     // ------  Evaluate RPN expression -------------------
 
     double evalPostfix(List<String> postfix) {
-        // TODO
+        ArrayDeque<String> stack = new ArrayDeque<>();
+        for(String token: postfix) {
+            if(isNum(token)) {
+                //DO SOMETHING
+            }
+        }
         return 0;
     }
 
@@ -69,11 +74,11 @@ public class Calculator {
         for(String token: infix) {
             if(isNum(token)) {
                 postfix.add(token);
+            } else if("(".equals(token)) {
+                stack.push(token);
             } else if(OPERATORS.contains(token)) {
                 addOperator(token,stack,postfix);
 
-            } else if("(".equals(token)) {
-                stack.push(token);
             } else if (")".equals(token)) {
                 handleParen(stack,postfix);
             }
@@ -88,32 +93,34 @@ public class Calculator {
         return !(OPERATORS.contains(token) || "()".contains(token));
     }
     void addOperator(String op, Deque<String> stack, List<String> result) {
-        while(keepPopping(op,stack)) {
+        while(!(stack.isEmpty()) && popNext(op,stack.peek())) {
             result.add(stack.pop());
         }
         stack.push(op);
     }
 
-    boolean keepPopping(String op, Deque<String> stack) {
-        if("(".equals(stack.peek())) {
+
+
+    boolean popNext(String op, String stackTop) {
+        if("(".equals(stackTop)) {
             return false;
         }
 
-        boolean leftPush = getPrecedence(op) <= getPrecedence(stack.peek()) && getAssociativity(op) == Assoc.LEFT;
-        boolean rightPush = getPrecedence(op) < getPrecedence(stack.peek());
-        return leftPush || rightPush;
+        int assoc = 0;
+        if(getAssociativity(op).equals(Assoc.LEFT)) { assoc = 1; }
+        return (getPrecedence(op)) < getPrecedence(stackTop) + assoc;
     }
 
     void  handleParen(Deque<String> stack, List<String> postfix) {
         try {
-            while(stack.peek() != "(") {
+            while (!"(".equals(stack.peek())) {
                 postfix.add(stack.pop());
             }
             stack.pop();
-        } catch(Exception E) {
-            //TODO
-            //There were mismatched parentheses
+        } catch (EmptyStackException e) {
+            //TODO Figure out what to do with mismatched brackets
         }
+
     }
 
     int getPrecedence(String op) {
@@ -148,16 +155,21 @@ public class Calculator {
     // List String (not char) because numbers (with many chars)
     List<String> tokenize(String expr) {
         List<String> tokens = new ArrayList<String>();
-        StringBuilder current = new StringBuilder(expr);
+        StringBuilder current = new StringBuilder();
         for(char c: expr.toCharArray()) { // It seems we can't iterate over a string without first converting it to a char allay.
             String cs = String.valueOf(c); //This is highly unfortunate since we must immediately convert the chars back to strings.
-            if(OPERATORS.contains(cs) || "()".contains(cs)) {
-                tokens.add(current.toString());
-                current.delete(0, current.length()-1);
+            if((OPERATORS.contains(cs) || "()".contains(cs))) {
+                if(current.length() > 0) {
+                    tokens.add(current.toString());
+                }
+                current = new StringBuilder();
                 tokens.add(cs);
             } else if(Character.isDigit(c)) {
                 current.append(cs);
             }
+        }
+        if(current.length() > 0) {
+            tokens.add(current.toString());
         }
         return tokens;
     }

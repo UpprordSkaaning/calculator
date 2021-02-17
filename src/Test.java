@@ -26,7 +26,7 @@ class Test {
         // Tokenization ---------------------------
 
         t("1 + 10", "1 + 10");  // Arguments are input and expected output
-        /*
+
         t("1+ 10", "1 + 10");   // Expected is in fact a list [ "1", "+", "10"]
         t("1 +10", "1 + 10");
         t("1+10", "1 + 10");
@@ -47,6 +47,7 @@ class Test {
         i2p("4^3*2", "4 3 ^ 2 *");
         i2p("(1+2)*3", "1 2 + 3 *");
         i2p("2^(1+1)", "2 1 1 + ^");
+        /*
 
         // Evaluation ------------------------------
         // A value
@@ -128,6 +129,8 @@ class Test {
     void t(String expr, String expected) {
         List<String> list = calculator.tokenize(expr);
         String result = String.join(" ", list);
+        System.out.println(result);
+        System.out.println(expected);
         out.println(result.equals(expected));
     }
 
@@ -136,6 +139,8 @@ class Test {
         List<String> tokens = calculator.tokenize(infix);
         List<String> postfix = calculator.infix2Postfix(tokens);
         String result = String.join(" ", postfix);
+        System.out.println(result);
+        System.out.println(expected);
         out.println(result.equals(expected));
     }
 
