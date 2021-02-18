@@ -40,18 +40,22 @@ public class Calculator {
     double evalPostfix(List<String> postfix) {
         ArrayDeque<Double> stack = new ArrayDeque<>();
         for(String token: postfix) {
-            if(isNum(token)) {
+            if(isNum(token)) {  //This time we add tokens that are numbers onto the stack
                 stack.push(Double.valueOf(token));
-            } else if(stack.size() > 1) {
+            } else if("(".equals(token)) { //If an open bracket managed to sneak into postfix
+                //it was not deleted in the handleParen method, meaning we have mismatched brackets.
+                //Throw exception.
+                throw new IllegalArgumentException(MISSING_OPERATOR);
+
+            } else if(stack.size() > 1) { //When we encounter an operator we pop 2 numbers from the stack and
+                //apply the operator, then we write the result back to the stack.
                 stack.push(applyOperator(token,stack.pop(),stack.pop()));
-            } else {
-                if("(".equals(token)){
-                    throw new IllegalArgumentException(MISSING_OPERATOR);
-                }
+            } else { //If the stack was empty an operator was missing, throw exception
                 throw new IllegalArgumentException(MISSING_OPERAND);
             }
         }
-
+        //The result should be on the top of the stack. If there are any more elements on the stack
+        //We did not have enough operators, throw exception
        if(stack.size() > 1){
            throw new IllegalArgumentException(MISSING_OPERATOR);
 
@@ -85,19 +89,16 @@ public class Calculator {
 
     List<String> infix2Postfix(List<String> infix) {
 
-
         Deque<String> stack = new ArrayDeque<>();
         List<String> postfix = new ArrayList<>();
         for(String token: infix) {
-            if(isNum(token)) {
+            if(isNum(token)) {  //Numbers should be added instantly
                 postfix.add(token);
-            } else if("(".equals(token)) {
-                stack.push(token);
-            } else if(OPERATORS.contains(token)) {
-                addOperator(token,stack,postfix);
-
-            } else if (")".equals(token)) {
+            } else if(")".equals(token)) {  //For everything else we need helper methods
                 handleParen(stack,postfix);
+            } else {
+                handleOperator(token,stack,postfix);
+
             }
         }
         while(!stack.isEmpty()) { //Add the remaining operators to the postfix
@@ -109,7 +110,8 @@ public class Calculator {
     boolean isNum(String token) {
         return !(OPERATORS.contains(token) || "()".contains(token));
     }
-    void addOperator(String op, Deque<String> stack, List<String> result) {
+
+    void handleOperator(String op, Deque<String> stack, List<String> result) {
         while(!(stack.isEmpty()) && popNext(op,stack.peek())) {
             result.add(stack.pop());
         }
@@ -117,18 +119,14 @@ public class Calculator {
     }
 
 
-
+    //According to the algorithm we should keep popping the stack as long as the operator on the stack has greater
+    //Precedence than the current operator and neither of them are parentheses.
     boolean popNext(String op, String stackTop) {
-        if("(".equals(stackTop)) {
-            return false;
-        }
-
-        int assoc = 0;
-        if(getAssociativity(op).equals(Assoc.LEFT)) { assoc = 1; }
-        return (getPrecedence(op)) < getPrecedence(stackTop) + assoc;
+        return !"(".equals(op) && (!"(".equals(stackTop) && (getPrecedence(op)) < getPrecedence(stackTop) + assocVal(stackTop));
     }
 
-    void  handleParen(Deque<String> stack, List<String> postfix) {
+    //It would be nicer to have this in tho handleOperator method, but I can't figure out hov
+    void handleParen(Deque<String> stack, List<String> postfix) {
         try {
             while (!"(".equals(stack.peek())) {
                 postfix.add(stack.pop());
@@ -159,8 +157,19 @@ public class Calculator {
         } else if ("^".contains(op)) {
             return Assoc.RIGHT;
         } else {
+            System.out.println(op);
             throw new RuntimeException(OP_NOT_FOUND);
         }
+    }
+
+    /*Assigns the value 1 to left associate operators and the value 0 to right associate operators and parentheses
+    This allows us take associativity into account when comparing operator precedence.
+     */
+    int assocVal(String op) {
+       if(Assoc.LEFT.equals(getAssociativity(op))) {
+            return 1;
+        }
+        return 0;
     }
 
     enum Assoc {

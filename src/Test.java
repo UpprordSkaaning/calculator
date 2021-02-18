@@ -24,7 +24,7 @@ class Test {
         // Uncomment line by line to test
 
         // Tokenization ---------------------------
-
+        /*
         t("1 + 10", "1 + 10");  // Arguments are input and expected output
 
         t("1+ 10", "1 + 10");   // Expected is in fact a list [ "1", "+", "10"]
@@ -77,6 +77,8 @@ class Test {
         e("1 + 30 / 3", 11);
         e("3 * 2 ^ 2", 12);
         e("3 ^ 2 * 2", 18);
+
+         */
 
         // Parentheses
         e("10 - (5 - 2)", 7);
